@@ -535,28 +535,34 @@
 
         function triggerNativeUpload(padId) {
             initAudioContext();
-            if (window.Android && typeof window.Android.openFileSelector === 'function') {
-                window.Android.openFileSelector(padId);
-            } else {
-                // Fallback für Browser-Tests am PC
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'audio/*';
-                input.onchange = e => {
-                    const file = e.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = function (event) {
-                            handleAndroidAudio(padId, file.name, event.target.result);
-                        };
-                        reader.readAsDataURL(file);
-                    }
+            
+            // Vorheriges temporäres Input-Feld entfernen falls vorhanden
+            const existingInput = document.getElementById('dynamicFileInput');
+            if (existingInput) existingInput.remove();
+
+            // Neues frisches Input-Element erstellen
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.id = 'dynamicFileInput';
+            input.accept = 'audio/*';
+            input.style.display = 'none';
+
+            input.onchange = e => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    processAudioFile(padId, file.name, event.target.result);
                 };
-                input.click();
-            }
+                reader.readAsDataURL(file);
+            };
+
+            document.body.appendChild(input);
+            input.click();
         }
 
-        async function handleAndroidAudio(padId, fileName, base64Data) {
+        async function processAudioFile(padId, fileName, base64Data) {
             initAudioContext();
             const displayName = fileName.substring(0, fileName.lastIndexOf('.')) || fileName;
             getPadMeta(padId).name = displayName;
