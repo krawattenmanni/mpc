@@ -1,379 +1,473 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Akai MPC 2000 - Yeezy Edition</title>
-    <style>
-        :root {
-            --bg-color: #d1cfc1;
-            --grid-bg: #b5b3a4;
-            --pad-bg: #8c8c8c;
-            --pad-border: #6e6e6e;
-            --pad-bottom: #525252;
-            --text-color: #222;
-            --kbd-color: #111;
-            --screen-bg: #5f734c;
-            --screen-text: #111a0d;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MPC — Yeezy Edition</title>
+<style>
+    :root{
+        --bg:#d9cfb4;
+        --device-bg:#c7bb98;
+        --panel-bg:#b3a683;
+        --pad-bg:#8d8168;
+        --pad-border:#69604c;
+        --pad-bottom:#453e30;
+        --ink:#16130e;
+        --ink-soft:#4a4432;
+        --accent:#d6491d;
+        --accent-ink:#fff9ee;
+        --screen-bg:#131110;
+        --screen-text:#eab35f;
+        --line: rgba(0,0,0,0.18);
+    }
 
-        body.dark-mode {
-            --bg-color: #181818;
-            --grid-bg: #242424;
-            --pad-bg: #383838;
-            --pad-border: #4f4f4f;
-            --pad-bottom: #1c1c1c;
-            --text-color: #eee;
-            --kbd-color: #fff;
-            --screen-bg: #0c140a;
-            --screen-text: #4ade80;
-        }
+    body.theme-black{
+        --bg:#0c0c0b;
+        --device-bg:#191815;
+        --panel-bg:#221f1a;
+        --pad-bg:#2b2822;
+        --pad-border:#48423a;
+        --pad-bottom:#000000;
+        --ink:#e7dcc0;
+        --ink-soft:#b8ab88;
+        --accent:#ff5a1f;
+        --accent-ink:#0c0c0b;
+        --screen-bg:#000000;
+        --screen-text:#ff6a2b;
+        --line: rgba(255,255,255,0.12);
+    }
 
-        body {
-            background-color: var(--bg-color); 
-            color: var(--text-color);
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            min-height: 100vh;
-            margin: 0;
-            padding: 6px;
-            box-sizing: border-box;
-            -webkit-user-select: none;
-            user-select: none; 
-            width: 100vw;
-            overflow-x: hidden;
-        }
+    *{ box-sizing: border-box; }
 
-        .screen {
-            background-color: var(--screen-bg);
-            border: 4px solid #444;
-            border-top-color: #222;
-            border-left-color: #222;
-            border-radius: 4px;
-            padding: 6px 10px;
-            margin-bottom: 6px;
-            box-shadow: inset 0 0 12px rgba(0,0,0,0.5);
-            text-align: center;
-            width: 96%;
-            max-width: 450px;
-            box-sizing: border-box;
-        }
+    body {
+        background-color: var(--bg);
+        color: var(--ink);
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        margin: 0;
+        padding: 10px;
+        -webkit-user-select: none;
+        user-select: none;
+        width: 100vw;
+        overflow-x: hidden;
+        transition: background-color .25s ease, color .25s ease;
+    }
 
-        .screen h1 { 
-            margin: 0; 
-            font-family: 'Courier New', Courier, monospace; 
-            font-size: 13px;
-            letter-spacing: 1px; 
-            color: var(--screen-text);
-            text-transform: uppercase;
-            font-weight: 900;
-        }
+    .device {
+        width: 100%;
+        max-width: 460px;
+        background: var(--device-bg);
+        border-radius: 14px;
+        padding: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+        border: 1px solid var(--line);
+    }
 
-        .screen-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 5px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 8px;
-            color: var(--screen-text);
-            font-weight: bold;
-            gap: 4px;
-        }
+    .brand-row {
+        display:flex;
+        align-items:baseline;
+        justify-content:space-between;
+        padding: 2px 4px 8px;
+    }
+    .brand-row h1 {
+        margin:0;
+        font-size: clamp(24px, 8vw, 34px);
+        font-weight: 900;
+        letter-spacing: -1px;
+        color: var(--ink);
+        text-transform: uppercase;
+    }
+    .brand-row span {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        color: var(--ink-soft);
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
 
-        .screen-row input[type="range"] {
-            width: 100px;
-        }
+    .hazard-bar {
+        height: 6px;
+        border-radius: 3px;
+        margin: 0 4px 10px;
+        background: repeating-linear-gradient(
+            45deg,
+            var(--ink) 0px, var(--ink) 8px,
+            var(--accent) 8px, var(--accent) 16px
+        );
+        opacity: 0.9;
+    }
 
-        .seq-btns {
-            display: flex;
-            gap: 4px;
-        }
+    .screen {
+        background-color: var(--screen-bg);
+        border-radius: 6px;
+        padding: 10px 12px;
+        margin-bottom: 8px;
+        box-shadow: inset 0 0 14px rgba(0,0,0,0.6);
+        text-align: center;
+        box-sizing: border-box;
+    }
 
-        .btn-seq {
-            background: #2a3821;
-            color: #4ade80;
-            border: 1px solid #111;
-            padding: 4px 8px;
-            font-size: 8px;
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 2px;
-        }
-        .btn-seq.recording {
-            background: #dc2626;
-            color: #fff;
-            animation: pulse 1s infinite;
-        }
-        .btn-seq.playing-loop {
-            background: #ca8a04;
-            color: #fff;
-        }
+    .screen-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 6px;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 9px;
+        color: var(--screen-text);
+        font-weight: bold;
+        gap: 6px;
+        letter-spacing: 0.5px;
+    }
+    .screen-row:first-child{ margin-top:0; }
 
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.4; }
-            100% { opacity: 1; }
-        }
+    .screen-row input[type="range"] {
+        width: 110px;
+        accent-color: var(--accent);
+    }
 
-        .controls-top {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 6px;
-            width: 96%;
-            max-width: 450px;
-            justify-content: center;
-        }
+    .seq-btns { display: flex; gap: 4px; }
 
-        .btn-control {
-            background: #555;
-            color: #fff;
-            border: 1px solid #333;
-            border-bottom: 3px solid #222;
-            padding: 6px 10px;
-            border-radius: 3px;
-            font-size: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            flex: 1;
-        }
-        .btn-control:active {
-            transform: translateY(2px);
-            border-bottom-width: 1px;
-        }
-        .btn-stop {
-            background: #991b1b;
-        }
+    .btn-seq {
+        background: #2a1f14;
+        color: var(--screen-text);
+        border: 1px solid #000;
+        padding: 5px 9px;
+        font-size: 8px;
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 2px;
+        letter-spacing: 0.5px;
+    }
+    .btn-seq.recording { background: var(--accent); color: #fff; animation: pulse 1s infinite; }
+    .btn-seq.playing-loop { background: #8a6d1f; color: #fff; }
 
-        .mpc-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            background: var(--grid-bg); 
-            padding: 10px;
-            border-radius: 6px;
-            box-shadow: inset 0 4px 12px rgba(0,0,0,0.3), 0 6px 15px rgba(0,0,0,0.15);
-            border: 2px solid #999;
-            width: 96%;
-            max-width: 450px;
-            box-sizing: border-box;
-        }
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.4; }
+        100% { opacity: 1; }
+    }
 
-        .pad-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background: rgba(0,0,0,0.06);
-            padding: 4px;
-            border-radius: 4px;
-        }
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-3px); }
+        75% { transform: translateX(3px); }
+    }
 
-        .pad {
-            width: 100%;
-            height: 60px;
-            background: var(--pad-bg); 
-            border: 2px solid var(--pad-border);
-            border-bottom: 5px solid var(--pad-bottom); 
-            border-radius: 4px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
-            touch-action: manipulation;
-        }
+    .controls-top, .bank-tabs {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 8px;
+    }
 
-        .pad kbd { 
-            font-size: 14px; 
-            font-weight: 900; 
-            color: var(--kbd-color); 
-            font-family: monospace;
-        }
+    .btn-control {
+        background: var(--ink);
+        color: var(--bg);
+        border: none;
+        border-bottom: 3px solid rgba(0,0,0,0.4);
+        padding: 8px 4px;
+        border-radius: 3px;
+        font-size: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        flex: 1;
+    }
+    .btn-control:active { transform: translateY(2px); border-bottom-width: 1px; }
+    .btn-stop { background: var(--accent); color: var(--accent-ink); }
 
-        .pad .sound { 
-            font-size: 7px; 
-            text-transform: uppercase; 
-            color: var(--text-color); 
-            margin-top: 2px; 
-            text-align: center; 
-            font-weight: bold;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 90%;
-        }
+    .bank-tab {
+        flex: 1;
+        background: var(--panel-bg);
+        color: var(--ink-soft);
+        border: 1px solid var(--line);
+        padding: 8px 0;
+        font-size: 11px;
+        font-weight: 900;
+        border-radius: 3px;
+        cursor: pointer;
+        letter-spacing: 1px;
+    }
+    .bank-tab.active {
+        background: var(--ink);
+        color: var(--bg);
+        border-color: var(--ink);
+    }
 
-        .pad.playing {
-            background: #f97316 !important; 
-            border-color: #c2410c !important;
-            border-bottom: 2px solid #7c2d12 !important; 
-            transform: translateY(3px); 
-        }
+    .mpc-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 7px;
+        background: var(--panel-bg);
+        padding: 10px;
+        border-radius: 6px;
+        box-shadow: inset 0 4px 12px rgba(0,0,0,0.25);
+        border: 1px solid var(--line);
+        margin-bottom: 8px;
+    }
 
-        .pad.playing kbd, .pad.playing .sound { 
-            color: #fff !important; 
-        }
+    .pad-container { display: flex; }
 
-        .pad-settings {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            margin-top: 3px;
-        }
+    .pad {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1 / 0.82;
+        background: var(--pad-bg);
+        border: 2px solid var(--pad-border);
+        border-bottom: 5px solid var(--pad-bottom);
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+        touch-action: manipulation;
+    }
 
-        .pad-settings select {
-            font-size: 8px;
-            padding: 2px;
-            background: var(--screen-bg);
-            color: var(--screen-text);
-            border: 1px solid #444;
-            border-radius: 2px;
-            width: 100%;
-        }
+    .pad kbd {
+        font-size: 13px;
+        font-weight: 900;
+        color: var(--ink);
+        font-family: monospace;
+        opacity: 0.85;
+    }
 
-        .upload-btn-label {
-            margin-top: 3px;
-            font-size: 8px;
-            background: #444;
-            color: #fff;
-            padding: 3px 0;
-            border-radius: 2px;
-            cursor: pointer;
-            text-transform: uppercase;
-            font-weight: bold;
-            text-align: center;
-            width: 100%;
-            display: block;
-        }
+    .pad .sound {
+        font-size: 7px;
+        text-transform: uppercase;
+        color: var(--ink);
+        margin-top: 3px;
+        text-align: center;
+        font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 88%;
+        opacity: 0.75;
+    }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: var(--bg-color);
-            color: var(--text-color);
-            padding: 15px;
-            border-radius: 6px;
-            width: 85%;
-            max-width: 300px;
-            border: 2px solid #555;
-            font-family: 'Courier New', Courier, monospace;
-        }
-        .modal-content h3 {
-            margin-top: 0;
-            font-size: 12px;
-            text-transform: uppercase;
-        }
-        .modal-content label {
-            font-size: 9px;
-            font-weight: bold;
-            display: block;
-            margin-top: 6px;
-        }
-        .modal-content input[type="text"] {
-            width: 100%;
-            padding: 5px;
-            box-sizing: border-box;
-            font-size: 9px;
-            margin-top: 3px;
-        }
-        .modal-content button {
-            margin-top: 10px;
-            width: 100%;
-            padding: 6px;
-            background: #555;
-            color: #fff;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 9px;
-            text-transform: uppercase;
-        }
+    .pad-add {
+        position: absolute;
+        top: 3px;
+        right: 3px;
+        width: 16px;
+        height: 16px;
+        line-height: 14px;
+        padding: 0;
+        border: 1px solid var(--pad-border);
+        border-radius: 50%;
+        background: rgba(0,0,0,0.15);
+        color: var(--ink);
+        font-size: 11px;
+        font-weight: 900;
+        cursor: pointer;
+    }
 
-        .waveform-container {
-            width: 96%;
-            max-width: 450px;
-            height: 40px;
-            background: var(--grid-bg);
-            border: 2px solid #999;
-            border-radius: 4px;
-            margin-top: 6px;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .pad.loaded .pad-add {
+        background: var(--accent);
+        color: var(--accent-ink);
+        border-color: var(--accent);
+    }
 
-        #waveformCanvas {
-            width: 100%;
-            height: 100%;
-            border-radius: 2px;
-        }
-    </style>
+    .pad.playing {
+        background: var(--accent) !important;
+        border-color: var(--accent) !important;
+        border-bottom: 2px solid rgba(0,0,0,0.4) !important;
+        transform: translateY(3px);
+    }
+    .pad.playing kbd, .pad.playing .sound { color: var(--accent-ink) !important; opacity: 1; }
+
+    .pad.empty-flash { animation: shake 0.22s ease; }
+
+    .edit-strip {
+        background: var(--panel-bg);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 8px 10px;
+        margin-bottom: 8px;
+        font-family: 'Courier New', Courier, monospace;
+    }
+    .edit-strip-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 6px;
+    }
+    #editPadLabel {
+        font-size: 9px;
+        font-weight: bold;
+        color: var(--ink);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .edit-load-btn {
+        background: var(--ink);
+        color: var(--bg);
+        border: none;
+        border-radius: 3px;
+        padding: 5px 8px;
+        font-size: 8px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+    .edit-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 9px;
+        font-weight: bold;
+        color: var(--ink-soft);
+        margin-top: 4px;
+    }
+    .edit-row span:first-child { width: 32px; }
+    .edit-row span:last-child { width: 42px; text-align: right; }
+    .edit-row input[type="range"] { flex: 1; accent-color: var(--accent); }
+
+    .waveform-container {
+        width: 100%;
+        height: 40px;
+        background: var(--panel-bg);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    #waveformCanvas { width: 100%; height: 100%; }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.7);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    .modal-content {
+        background: var(--device-bg);
+        color: var(--ink);
+        padding: 16px;
+        border-radius: 8px;
+        width: 85%;
+        max-width: 300px;
+        border: 1px solid var(--line);
+        font-family: 'Courier New', Courier, monospace;
+    }
+    .modal-content h3 {
+        margin-top: 0;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .modal-content label {
+        font-size: 9px;
+        font-weight: bold;
+        display: block;
+        margin-top: 8px;
+    }
+    .modal-content input[type="text"] {
+        width: 100%;
+        padding: 6px;
+        box-sizing: border-box;
+        font-size: 10px;
+        margin-top: 3px;
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        background: var(--bg);
+        color: var(--ink);
+    }
+    .modal-content button {
+        margin-top: 10px;
+        width: 100%;
+        padding: 8px;
+        background: var(--ink);
+        color: var(--bg);
+        border: none;
+        border-radius: 3px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+</style>
 </head>
 <body id="body">
 
-    <div class="screen">
-        <h1>MIDI PRODUCTION CENTER</h1>
-        <div class="screen-row">
-            <span>MASTER VOL:</span>
-            <input type="range" id="masterVolume" min="0" max="1" step="0.05" value="1" oninput="updateMasterVolume()">
+    <div class="device">
+
+        <div class="brand-row">
+            <h1>MPC</h1>
+            <span>Yeezy Edition</span>
         </div>
-        <div class="screen-row" style="margin-top: 6px; border-top: 1px dashed #3a4a30; padding-top: 4px;">
-            <span id="seqStatus">SEQ: READY</span>
-            <div class="seq-btns">
-                <button class="btn-seq" id="btnRec" onclick="toggleRecord()">● REC</button>
-                <button class="btn-seq" id="btnLoop" onclick="toggleLoopPlay()">▶ LOOP</button>
+        <div class="hazard-bar"></div>
+
+        <div class="screen">
+            <div class="screen-row">
+                <span>MASTER VOL:</span>
+                <input type="range" id="masterVolume" min="0" max="1" step="0.05" value="1" oninput="updateMasterVolume()">
+            </div>
+            <div class="screen-row">
+                <span id="seqStatus">SEQ: READY</span>
+                <div class="seq-btns">
+                    <button class="btn-seq" id="btnRec" onclick="toggleRecord()">● REC</button>
+                    <button class="btn-seq" id="btnLoop" onclick="toggleLoopPlay()">▶ LOOP</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="controls-top">
-        <button class="btn-control btn-stop" onclick="stopAllSounds()">⏹ STOP ALL</button>
-        <button class="btn-control" onclick="openSettings()">⚙ SETTINGS</button>
-        <button class="btn-control" onclick="toggleTheme()">🎨 SKIN</button>
-    </div>
+        <div class="controls-top">
+            <button class="btn-control btn-stop" onclick="stopAllSounds()">⏹ Stop All</button>
+            <button class="btn-control" onclick="openSettings()">⚙ Settings</button>
+            <button class="btn-control" id="btnColorway" onclick="toggleTheme()">🎨 Colorway: Bone</button>
+        </div>
 
-    <div class="mpc-grid">
-        <script>
-            const keys = ['81', '87', '69', '65', '83', '68', '89', '88', '67'];
-            const labels = ['Q', 'W', 'E', 'A', 'S', 'D', 'Y', 'X', 'C'];
-            
-            keys.forEach((key, index) => {
-                document.write(`
-                    <div class="pad-container">
-                        <div data-key="${key}" class="pad"><kbd>${labels[index]}</kbd><span class="sound">Leer</span></div>
-                        <div class="pad-settings">
-                            <select id="pitch-${key}">
-                                <option value="0.5">0.5x</option>
-                                <option value="1" selected>1.0x</option>
-                                <option value="1.5">1.5x</option>
-                                <option value="2">2.0x</option>
-                            </select>
-                        </div>
-                        <input type="range" id="vol-${key}" min="0" max="1" step="0.1" value="1" style="width: 100%; margin-top: 2px;">
-                        <label class="upload-btn-label" onclick="triggerNativeUpload('${key}')">Sound +</label>
-                    </div>
-                `);
-            });
-        </script>
-    </div>
+        <div class="bank-tabs" id="bankTabs">
+            <button class="bank-tab active" data-bank="A" onclick="switchBank('A')">A</button>
+            <button class="bank-tab" data-bank="B" onclick="switchBank('B')">B</button>
+            <button class="bank-tab" data-bank="C" onclick="switchBank('C')">C</button>
+            <button class="bank-tab" data-bank="D" onclick="switchBank('D')">D</button>
+        </div>
 
-    <div class="waveform-container">
-        <canvas id="waveformCanvas"></canvas>
+        <div class="mpc-grid" id="padGrid"></div>
+
+        <div class="edit-strip">
+            <div class="edit-strip-head">
+                <span id="editPadLabel">BANK A · PAD 1 — LEER</span>
+                <button class="edit-load-btn" onclick="loadSampleForSelected()">Sample laden</button>
+            </div>
+            <div class="edit-row">
+                <span>TUNE</span>
+                <input type="range" id="editTune" min="0.5" max="2" step="0.01" value="1" oninput="onEditTune(this.value)">
+                <span id="editTuneVal">1.00x</span>
+            </div>
+            <div class="edit-row">
+                <span>VOL</span>
+                <input type="range" id="editVol" min="0" max="1" step="0.01" value="1" oninput="onEditVol(this.value)">
+                <span id="editVolVal">100%</span>
+            </div>
+        </div>
+
+        <div class="waveform-container">
+            <canvas id="waveformCanvas"></canvas>
+        </div>
+
     </div>
 
     <div class="modal" id="settingsModal">
@@ -384,19 +478,28 @@
             <label>Stamm-Verzeichnis:</label>
             <input type="text" id="baseDirInput" value="MPC_Projekte/">
             <button onclick="saveProjectSettings()">Übernehmen</button>
-            <button onclick="closeSettings()" style="background:#333; margin-top: 3px;">Schließen</button>
+            <button onclick="closeSettings()" style="background:var(--accent); color:var(--accent-ink); margin-top: 6px;">Schließen</button>
         </div>
     </div>
 
     <script>
         let masterVol = 1;
-        const soundBuffers = {}; 
-        let activeSources = {}; 
+        const soundBuffers = {};
+        const padMeta = {};
+        let activeSources = {};
         let isRecording = false;
         let isPlayingLoop = false;
         let recStartTime = 0;
-        let recordedEvents = []; 
+        let recordedEvents = [];
         let loopIntervalId = null;
+        let currentBank = 'A';
+        let selectedPadId = null;
+        const padRefs = [];
+
+        const KEY_LAYOUT = ['1','2','3','4','Q','W','E','R','A','S','D','F','Z','X','C','V'];
+        const KEYCODES  = [49,50,51,52,81,87,69,82,65,83,68,70,90,88,67,86];
+        const KEYCODE_TO_INDEX = {};
+        KEYCODES.forEach((kc, i) => { KEYCODE_TO_INDEX[kc] = i; });
 
         let currentProject = { name: "Yeezy_Runaway_Project", baseDir: "MPC_Projekte/" };
 
@@ -425,10 +528,15 @@
             }
         }
 
-        function triggerNativeUpload(key) {
+        function getPadMeta(padId) {
+            if (!padMeta[padId]) padMeta[padId] = { tune: 1, vol: 1, name: null };
+            return padMeta[padId];
+        }
+
+        function triggerNativeUpload(padId) {
             initAudioContext();
             if (window.Android && typeof window.Android.openFileSelector === 'function') {
-                window.Android.openFileSelector(key);
+                window.Android.openFileSelector(padId);
             } else {
                 // Fallback für Browser-Tests am PC
                 const input = document.createElement('input');
@@ -436,10 +544,10 @@
                 input.accept = 'audio/*';
                 input.onchange = e => {
                     const file = e.target.files[0];
-                    if(file) {
+                    if (file) {
                         const reader = new FileReader();
-                        reader.onload = function(event) {
-                            handleAndroidAudio(key, file.name, event.target.result);
+                        reader.onload = function (event) {
+                            handleAndroidAudio(padId, file.name, event.target.result);
                         };
                         reader.readAsDataURL(file);
                     }
@@ -448,21 +556,26 @@
             }
         }
 
-        async function handleAndroidAudio(keyCode, fileName, base64Data) {
+        async function handleAndroidAudio(padId, fileName, base64Data) {
             initAudioContext();
-            const soundSpan = document.querySelector(`.pad[data-key="${keyCode}"] .sound`);
-            if(soundSpan) {
-                soundSpan.textContent = fileName.substring(0, fileName.lastIndexOf('.')) || fileName;
-            }
+            const displayName = fileName.substring(0, fileName.lastIndexOf('.')) || fileName;
+            getPadMeta(padId).name = displayName;
 
             try {
                 const response = await fetch(base64Data);
                 const arrayBuffer = await response.arrayBuffer();
                 const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-                soundBuffers[keyCode] = audioBuffer;
+                soundBuffers[padId] = audioBuffer;
             } catch (err) {
                 console.log("Fehler beim Laden des Audios:", err);
             }
+
+            const ref = padRefs.find(r => r.pad.dataset.pad === padId);
+            if (ref) {
+                ref.soundSpan.textContent = displayName;
+                ref.pad.classList.add('loaded');
+            }
+            if (selectedPadId === padId) updateEditStrip(padId);
         }
 
         function setupVisualizer() {
@@ -478,11 +591,11 @@
                 requestAnimationFrame(draw);
                 analyser.getByteTimeDomainData(dataArray);
 
-                canvasCtx.fillStyle = getComputedStyle(document.body).getPropertyValue('--grid-bg').trim() || '#b5b3a4';
+                canvasCtx.fillStyle = getComputedStyle(document.body).getPropertyValue('--panel-bg').trim() || '#b3a683';
                 canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
 
                 canvasCtx.lineWidth = 2;
-                canvasCtx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text-color').trim() || '#222';
+                canvasCtx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--accent').trim() || '#d6491d';
                 canvasCtx.beginPath();
 
                 const sliceWidth = canvas.width / bufferLength;
@@ -501,12 +614,16 @@
             draw();
         }
 
-        function updateMasterVolume() { masterVol = document.getElementById('masterVolume').value; }
-        function toggleTheme() { document.getElementById('body').classList.toggle('dark-mode'); }
+        function updateMasterVolume() { masterVol = parseFloat(document.getElementById('masterVolume').value); }
+
+        function toggleTheme() {
+            const black = document.body.classList.toggle('theme-black');
+            document.getElementById('btnColorway').textContent = black ? '🎨 Colorway: Black' : '🎨 Colorway: Bone';
+        }
 
         function stopAllSounds() {
-            Object.keys(activeSources).forEach(key => {
-                if (activeSources[key]) { try { activeSources[key].stop(); } catch(e) {} }
+            Object.keys(activeSources).forEach(id => {
+                if (activeSources[id]) { try { activeSources[id].stop(); } catch (e) {} }
             });
             stopLoopPlay();
         }
@@ -564,56 +681,162 @@
             const seqStatus = document.getElementById('seqStatus');
             btnLoop.classList.remove('playing-loop');
             btnLoop.textContent = "▶ LOOP";
-            if(!isRecording) seqStatus.textContent = "STOPPED";
+            if (!isRecording) seqStatus.textContent = "STOPPED";
             if (loopIntervalId) { clearInterval(loopIntervalId); loopIntervalId = null; }
         }
 
         function playRecordedSequence() {
             if (recordedEvents.length === 0) return;
-            recordedEvents.forEach(event => {
+            recordedEvents.forEach(evt => {
                 setTimeout(() => {
-                    if (!isPlayingLoop) return; 
-                    const pad = document.querySelector(`.pad[data-key="${event.keyCode}"]`);
-                    if (pad) triggerPad(event.keyCode, pad, false); 
-                }, event.time * 1000);
+                    if (!isPlayingLoop) return;
+                    const ref = padRefs.find(r => r.pad.dataset.pad === evt.padId);
+                    if (ref) {
+                        ref.pad.classList.add('playing');
+                        setTimeout(() => ref.pad.classList.remove('playing'), 90);
+                    }
+                    playBuffer(evt.padId);
+                }, evt.time * 1000);
             });
         }
 
-        function triggerPad(keyCode, padElement, recordIt = true) {
-            initAudioContext();
-            const buffer = soundBuffers[keyCode];
-            if (!buffer) return; 
-
-            if (isRecording && recordIt) {
-                recordedEvents.push({ keyCode: keyCode, time: audioCtx.currentTime - recStartTime });
-            }
+        function playBuffer(padId) {
+            const buffer = soundBuffers[padId];
+            if (!buffer) return;
+            const meta = getPadMeta(padId);
 
             const source = audioCtx.createBufferSource();
             source.buffer = buffer;
-            source.playbackRate.value = parseFloat(document.getElementById(`pitch-${keyCode}`).value);
+            source.playbackRate.value = meta.tune;
 
             const gainNode = audioCtx.createGain();
-            gainNode.gain.value = parseFloat(document.getElementById(`vol-${keyCode}`).value) * masterVol;
+            gainNode.gain.value = meta.vol * masterVol;
 
             source.connect(gainNode);
             gainNode.connect(analyser);
             source.start(0);
-            activeSources[keyCode] = source;
-
-            padElement.classList.add('playing');
-            setTimeout(() => padElement.classList.remove('playing'), 80);
+            activeSources[padId] = source;
         }
 
-        window.addEventListener('keydown', (e) => {
-            const pad = document.querySelector(`.pad[data-key="${e.keyCode}"]`);
-            if (pad) triggerPad(e.keyCode.toString(), pad);
+        function flashEmpty(padElement) {
+            padElement.classList.add('empty-flash');
+            setTimeout(() => padElement.classList.remove('empty-flash'), 220);
+        }
+
+        function triggerPad(padId, padElement, recordIt = true) {
+            initAudioContext();
+            if (!soundBuffers[padId]) {
+                if (padElement) flashEmpty(padElement);
+                return;
+            }
+            if (isRecording && recordIt) {
+                recordedEvents.push({ padId: padId, time: audioCtx.currentTime - recStartTime });
+            }
+            playBuffer(padId);
+            if (padElement) {
+                padElement.classList.add('playing');
+                setTimeout(() => padElement.classList.remove('playing'), 90);
+            }
+        }
+
+        function handleTap(padId, padElement) {
+            selectedPadId = padId;
+            updateEditStrip(padId);
+            triggerPad(padId, padElement);
+        }
+
+        function updateEditStrip(padId) {
+            const meta = getPadMeta(padId);
+            const bank = padId.charAt(0);
+            const idx = parseInt(padId.slice(1), 10) - 1;
+            const keyLabel = KEY_LAYOUT[idx] !== undefined ? KEY_LAYOUT[idx] : '?';
+            document.getElementById('editPadLabel').textContent = `BANK ${bank} · PAD ${keyLabel} — ${meta.name || 'LEER'}`;
+            document.getElementById('editTune').value = meta.tune;
+            document.getElementById('editTuneVal').textContent = meta.tune.toFixed(2) + 'x';
+            document.getElementById('editVol').value = meta.vol;
+            document.getElementById('editVolVal').textContent = Math.round(meta.vol * 100) + '%';
+        }
+
+        function onEditTune(v) {
+            if (!selectedPadId) return;
+            const val = parseFloat(v);
+            getPadMeta(selectedPadId).tune = val;
+            document.getElementById('editTuneVal').textContent = val.toFixed(2) + 'x';
+        }
+
+        function onEditVol(v) {
+            if (!selectedPadId) return;
+            const val = parseFloat(v);
+            getPadMeta(selectedPadId).vol = val;
+            document.getElementById('editVolVal').textContent = Math.round(val * 100) + '%';
+        }
+
+        function loadSampleForSelected() {
+            if (selectedPadId) triggerNativeUpload(selectedPadId);
+        }
+
+        function refreshPadDisplay() {
+            padRefs.forEach((ref, i) => {
+                const padId = currentBank + String(i + 1).padStart(2, '0');
+                ref.pad.dataset.pad = padId;
+                const meta = padMeta[padId];
+                ref.soundSpan.textContent = (meta && meta.name) ? meta.name : 'LEER';
+                ref.pad.classList.toggle('loaded', !!(meta && meta.name));
+            });
+            document.querySelectorAll('.bank-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.bank === currentBank);
+            });
+        }
+
+        function switchBank(letter) {
+            currentBank = letter;
+            refreshPadDisplay();
+        }
+
+        function buildPadGrid() {
+            const grid = document.getElementById('padGrid');
+            grid.innerHTML = '';
+            padRefs.length = 0;
+
+            KEY_LAYOUT.forEach(() => {
+                const container = document.createElement('div');
+                container.className = 'pad-container';
+
+                const pad = document.createElement('div');
+                pad.className = 'pad';
+                pad.innerHTML = '<button class="pad-add" type="button" aria-label="Sound laden">+</button><kbd></kbd><span class="sound">LEER</span>';
+
+                container.appendChild(pad);
+                grid.appendChild(container);
+
+                const soundSpan = pad.querySelector('.sound');
+                const addBtn = pad.querySelector('.pad-add');
+                padRefs.push({ container, pad, soundSpan, addBtn });
+
+                pad.addEventListener('touchstart', e => { e.preventDefault(); handleTap(pad.dataset.pad, pad); }, { passive: false });
+                pad.addEventListener('mousedown', () => handleTap(pad.dataset.pad, pad));
+
+                addBtn.addEventListener('touchstart', e => { e.stopPropagation(); e.preventDefault(); triggerNativeUpload(pad.dataset.pad); }, { passive: false });
+                addBtn.addEventListener('click', e => { e.stopPropagation(); triggerNativeUpload(pad.dataset.pad); });
+            });
+
+            padRefs.forEach((ref, i) => {
+                ref.pad.querySelector('kbd').textContent = KEY_LAYOUT[i];
+            });
+        }
+
+        window.addEventListener('keydown', e => {
+            if (e.repeat) return;
+            const idx = KEYCODE_TO_INDEX[e.keyCode];
+            if (idx === undefined) return;
+            const ref = padRefs[idx];
+            if (ref) handleTap(ref.pad.dataset.pad, ref.pad);
         });
 
-        document.querySelectorAll('.pad').forEach(pad => {
-            const keyCode = pad.getAttribute('data-key');
-            pad.addEventListener('touchstart', (e) => { e.preventDefault(); triggerPad(keyCode, pad); }, {passive: false});
-            pad.addEventListener('mousedown', () => triggerPad(keyCode, pad));
-        });
+        buildPadGrid();
+        switchBank('A');
+        selectedPadId = 'A01';
+        updateEditStrip(selectedPadId);
     </script>
 </body>
 </html>
