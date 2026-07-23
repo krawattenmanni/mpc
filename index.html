@@ -252,9 +252,6 @@
             width: 100%;
             display: block;
         }
-        .file-input {
-            display: none;
-        }
 
         .modal {
             display: none;
@@ -368,7 +365,7 @@
                             </select>
                         </div>
                         <input type="range" id="vol-${key}" min="0" max="1" step="0.1" value="1" style="width: 100%; margin-top: 2px;">
-                        <label class="upload-btn-label">Sound +<input type="file" class="file-input" data-key="${key}" accept="audio/*"></label>
+                        <label class="upload-btn-label" onclick="triggerNativeUpload('${key}')">Sound +</label>
                     </div>
                 `);
             });
@@ -426,6 +423,31 @@
             } else if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
+        }
+
+        function triggerNativeUpload(key) {
+            initAudioContext();
+            if (window.Android && typeof window.Android.openFileSelector === 'function') {
+                window.Android.openFileSelector(key);
+            } else {
+                // Fallback für Browser-Tests am PC
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'audio/*';
+                input.onchange = e => loadAudioFile(e.target.files[0], key);
+                input.click();
+            }
+        }
+
+        async function loadAudioFile(file, keyCode) {
+            if (!file) return;
+            const soundSpan = document.querySelector(`.pad[data-key="${keyCode}"] .sound`);
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+                soundBuffers[keyCode] = audioBuffer;
+                soundSpan.textContent = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+            } catch (err) { console.log(err); }
         }
 
         function setupVisualizer() {
@@ -541,24 +563,6 @@
                 }, event.time * 1000);
             });
         }
-
-        document.querySelectorAll('.file-input').forEach(input => {
-            input.addEventListener('change', async function(e) {
-                initAudioContext();
-                const file = e.target.files[0];
-                if (!file) return;
-
-                const keyCode = this.getAttribute('data-key');
-                const soundSpan = document.querySelector(`.pad[data-key="${keyCode}"] .sound`);
-
-                try {
-                    const arrayBuffer = await file.arrayBuffer();
-                    const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-                    soundBuffers[keyCode] = audioBuffer;
-                    soundSpan.textContent = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
-                } catch (err) { console.log(err); }
-            });
-        });
 
         function triggerPad(keyCode, padElement, recordIt = true) {
             initAudioContext();
