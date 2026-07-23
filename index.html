@@ -434,20 +434,35 @@
                 const input = document.createElement('input');
                 input.type = 'file';
                 input.accept = 'audio/*';
-                input.onchange = e => loadAudioFile(e.target.files[0], key);
+                input.onchange = e => {
+                    const file = e.target.files[0];
+                    if(file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            handleAndroidAudio(key, file.name, event.target.result);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                };
                 input.click();
             }
         }
 
-        async function loadAudioFile(file, keyCode) {
-            if (!file) return;
+        async function handleAndroidAudio(keyCode, fileName, base64Data) {
+            initAudioContext();
             const soundSpan = document.querySelector(`.pad[data-key="${keyCode}"] .sound`);
+            if(soundSpan) {
+                soundSpan.textContent = fileName.substring(0, fileName.lastIndexOf('.')) || fileName;
+            }
+
             try {
-                const arrayBuffer = await file.arrayBuffer();
+                const response = await fetch(base64Data);
+                const arrayBuffer = await response.arrayBuffer();
                 const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
                 soundBuffers[keyCode] = audioBuffer;
-                soundSpan.textContent = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
-            } catch (err) { console.log(err); }
+            } catch (err) {
+                console.log("Fehler beim Laden des Audios:", err);
+            }
         }
 
         function setupVisualizer() {
